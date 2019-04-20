@@ -1273,10 +1273,10 @@ class TestLineString(unittest.TestCase):
         assert np.allclose(observed.arr_0to1, 0.0)
 
     def test_segmentation_map(self):
-        from imgaug.augmentables.segmaps import SegmentationMapOnImage
+        from imgaug.augmentables.segmaps import SegmentationMapsOnImage
         ls = LineString([(0, 5), (5, 5)])
         observed = ls.to_segmentation_map((10, 10))
-        assert isinstance(observed, SegmentationMapOnImage)
+        assert isinstance(observed, SegmentationMapsOnImage)
         assert observed.shape == (10, 10)
         assert observed.arr.shape == (10, 10, 1)
         assert np.all(observed.arr[0:5, :, :] == 0)

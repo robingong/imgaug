@@ -12,6 +12,8 @@ from imgaug import augmenters as iaa
 from imgaug import parameters as iap
 from imgaug import dtypes as iadt
 from imgaug.testutils import keypoints_equal, reseed
+from imgaug.augmentables.heatmaps import HeatmapsOnImage
+from imgaug.augmentables.segmaps import SegmentationMapsOnImage
 
 
 def main():
@@ -98,7 +100,7 @@ def test_Fliplr():
 
     # 0% chance of flip, heatmaps
     aug = iaa.Fliplr(0)
-    heatmaps = ia.HeatmapsOnImage(
+    heatmaps = HeatmapsOnImage(
         np.float32([
             [0, 0.5, 0.75],
             [0, 0.5, 0.75],
@@ -111,6 +113,21 @@ def test_Fliplr():
     assert observed.shape == heatmaps.shape
     assert heatmaps.min_value - 1e-6 < observed.min_value < heatmaps.min_value + 1e-6
     assert heatmaps.max_value - 1e-6 < observed.max_value < heatmaps.max_value + 1e-6
+    assert np.array_equal(observed.get_arr(), expected)
+
+    # 0% chance of flip, segmaps
+    aug = iaa.Fliplr(0)
+    segmaps = SegmentationMapsOnImage(
+        np.int32([
+            [0, 1, 2],
+            [0, 1, 2],
+            [2, 2, 2],
+        ]),
+        shape=(3, 3, 3)
+    )
+    observed = aug.augment_segmentation_maps([segmaps])[0]
+    expected = segmaps.get_arr()
+    assert observed.shape == segmaps.shape
     assert np.array_equal(observed.get_arr(), expected)
 
     # 100% chance of flip
@@ -145,7 +162,7 @@ def test_Fliplr():
 
     # 100% chance of flip, heatmaps
     aug = iaa.Fliplr(1.0)
-    heatmaps = ia.HeatmapsOnImage(
+    heatmaps = HeatmapsOnImage(
         np.float32([
             [0, 0.5, 0.75],
             [0, 0.5, 0.75],
@@ -158,6 +175,21 @@ def test_Fliplr():
     assert observed.shape == heatmaps.shape
     assert heatmaps.min_value - 1e-6 < observed.min_value < heatmaps.min_value + 1e-6
     assert heatmaps.max_value - 1e-6 < observed.max_value < heatmaps.max_value + 1e-6
+    assert np.array_equal(observed.get_arr(), expected)
+
+    # 100% chance of flip, segmaps
+    aug = iaa.Fliplr(1.0)
+    segmaps = SegmentationMapsOnImage(
+        np.int32([
+            [0, 1, 2],
+            [0, 1, 2],
+            [2, 2, 2],
+        ]),
+        shape=(3, 3, 3)
+    )
+    observed = aug.augment_segmentation_maps([segmaps])[0]
+    expected = np.fliplr(segmaps.get_arr())
+    assert observed.shape == segmaps.shape
     assert np.array_equal(observed.get_arr(), expected)
 
     # 50% chance of flip
@@ -353,7 +385,7 @@ def test_Flipud():
 
     # 0% chance of flip, heatmaps
     aug = iaa.Flipud(0)
-    heatmaps = ia.HeatmapsOnImage(
+    heatmaps = HeatmapsOnImage(
         np.float32([
             [0, 0.5, 0.75],
             [0, 0.5, 0.75],
@@ -366,6 +398,21 @@ def test_Flipud():
     assert observed.shape == heatmaps.shape
     assert heatmaps.min_value - 1e-6 < observed.min_value < heatmaps.min_value + 1e-6
     assert heatmaps.max_value - 1e-6 < observed.max_value < heatmaps.max_value + 1e-6
+    assert np.array_equal(observed.get_arr(), expected)
+
+    # 0% chance of flip, segmaps
+    aug = iaa.Flipud(0)
+    segmaps = SegmentationMapsOnImage(
+        np.int32([
+            [0, 1, 2],
+            [0, 1, 2],
+            [2, 2, 2],
+        ]),
+        shape=(3, 3, 3)
+    )
+    observed = aug.augment_segmentation_maps([segmaps])[0]
+    expected = segmaps.get_arr()
+    assert observed.shape == segmaps.shape
     assert np.array_equal(observed.get_arr(), expected)
 
     # 100% chance of flip
@@ -413,6 +460,21 @@ def test_Flipud():
     assert observed.shape == heatmaps.shape
     assert heatmaps.min_value - 1e-6 < observed.min_value < heatmaps.min_value + 1e-6
     assert heatmaps.max_value - 1e-6 < observed.max_value < heatmaps.max_value + 1e-6
+    assert np.array_equal(observed.get_arr(), expected)
+
+    # 100% chance of flip, segmaps
+    aug = iaa.Flipud(1.0)
+    segmaps = SegmentationMapsOnImage(
+        np.int32([
+            [0, 1, 2],
+            [0, 1, 2],
+            [2, 2, 2],
+        ]),
+        shape=(3, 3, 3)
+    )
+    observed = aug.augment_segmentation_maps([segmaps])[0]
+    expected = np.flipud(segmaps.get_arr())
+    assert observed.shape == segmaps.shape
     assert np.array_equal(observed.get_arr(), expected)
 
     # 50% chance of flip
