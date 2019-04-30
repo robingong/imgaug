@@ -1,9 +1,9 @@
 import imgaug as ia
 from imgaug import augmenters as iaa
-import numpy as np
+
 #alex
 import cv2
-import matplotlib.pyplot as plt
+import random
 import os
 import sys
 import multiprocessing as mp
@@ -16,20 +16,47 @@ ia.seed(1)
 #     [ia.quokka(size=(64, 64)) for _ in range(32)],
 #     dtype=np.uint8
 # )
+MAX_IMAGES = 20
+#背景图片的cv2 读取后的数组，numpy格式
 
-
+def getRandomBg(folder,cv2_bg_imgs):
+    print("-->>run in getRandomBg,folder=",folder)
+    print("-->>run in getRandomBg,len(cv2_bg_imgs)=", len(cv2_bg_imgs))
+    if len(cv2_bg_imgs)==0: #背景数据还没有被初始化
+        fileList = os.listdir(folder)
+        # 背景图片的初始化
+        for f in fileList:
+            fPath = os.path.join(folder,f)
+            if os.path.isfile(fPath) and f.endswith(".jpg"):
+                temp = cv2.imread(fPath)
+                cv2_bg_imgs.append(temp)
+        print("len(cv2_bg_imgs): ",len(cv2_bg_imgs))
+    #已经被初始化了,开始随机选择
+    i = random.randint(0, len(cv2_bg_imgs)) #0<= <=lenth
+    return cv2_bg_imgs[i]
 
 def augmentateImg(fromPathChild,toPathChild,minimal=1000):
-    #读取path的jpg文件
-    # todo 如果不足 minimal,随机抽取病复制现有的图片，去补足
+    print("-->>run in augmentateImg")
+    # 如果不足 minimal,随机抽取病复制现有的图片，去补足
     list = os.listdir(fromPathChild)
     # print(list)
     images = []
-    for f in list:
-        imgFile = os.path.join(fromPathChild,f)
-        temp = cv2.imread(imgFile)
-        images.append(temp)
-    print(len(images))
+    # for f in list:
+    #     imgFile = os.path.join(fromPathChild,f)
+    #     temp = cv2.imread(imgFile)
+    #     images.append(temp)
+    cv2_bg_imgs = []
+    i=0
+    while i < 10:
+        print(i)
+        image = getRandomBg(fromPathChild,cv2_bg_imgs)
+        images.append(image)
+        print("len(images): ",len(images))
+        i = i+1
+
+    # image = getRandomBg(fromPathChild, cv2_bg_imgs)
+    # images.append(image)
+    print("-----------------")
 
     seq = iaa.Sequential([
         # iaa.Fliplr(0.5),  # horizontal flips
