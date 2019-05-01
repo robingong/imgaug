@@ -30,9 +30,10 @@ def getRandomBg(folder,cv2_bg_imgs):
             if os.path.isfile(fPath) and f.endswith(".jpg"):
                 temp = cv2.imread(fPath)
                 cv2_bg_imgs.append(temp)
-        print("len(cv2_bg_imgs): ",len(cv2_bg_imgs))
+
     #已经被初始化了,开始随机选择
-    i = random.randint(0, len(cv2_bg_imgs)) #0<= <=lenth
+    i = random.randint(0, len(cv2_bg_imgs)-1) #0<= <=lenth
+    print("len(cv2_bg_imgs): ", len(cv2_bg_imgs)-1,",i:",i)
     return cv2_bg_imgs[i]
 
 def augmentateImg(fromPathChild,toPathChild,minimal=1000):
@@ -47,10 +48,13 @@ def augmentateImg(fromPathChild,toPathChild,minimal=1000):
     #     images.append(temp)
     cv2_bg_imgs = []
     i=0
-    while i < 10:
+    while i < 1000:
         print(i)
-        image = getRandomBg(fromPathChild,cv2_bg_imgs)
-        images.append(image)
+        try:
+            image = getRandomBg(fromPathChild,cv2_bg_imgs)
+            images.append(image)
+        except BaseException as e:
+            print(e)
         print("len(images): ",len(images))
         i = i+1
 
@@ -90,14 +94,14 @@ def augmentateImg(fromPathChild,toPathChild,minimal=1000):
     ], random_order=True)  # apply augmenters in random order
 
     images_aug = seq.augment_images(images)
-    print(len(images_aug))
+    print("len(images_aug):",len(images_aug))
     name = 0
     for img in images_aug:
         name = name + 1
         # plt.imshow(img)
         # plt.show()
         cv2.imwrite( os.path.join(toPathChild,str(name) + ".jpg"), img)
-
+        # cv2.close()
 
 def multiProc(processor, fromchildPathes,tochildPathes):
     # mp.cpu_count()
